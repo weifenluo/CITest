@@ -25,18 +25,18 @@ jobs:
 
       - name: Start SQL Server
         run: |
-          wsl -d Ubuntu-24.04 docker run -itd --network host --name MSSQL \
-            -p 1433:1433 \
-            -e "MSSQL_SA_PASSWORD=${{ secrets.TESTDB_PASSWORD }}" \
-            -e "ACCEPT_EULA=Y" \
+          wsl -d Ubuntu-24.04 docker run -itd --network host --name MSSQL `
+            -p 1433:1433 `
+            -e "MSSQL_SA_PASSWORD=${{ secrets.TESTDB_PASSWORD }}" `
+            -e "ACCEPT_EULA=Y" `
             ghcr.io/openentity/adventureworksltdb:mssql2022
 
       - name: Start Postgres
         run: |
-          wsl -d Ubunbu-24.04 docker run -itd --network host --name Postgres \
-            -p 5432:5432 \
-            -e "POSTGRES_USER=admin" \
-            -e "POSTGRES_PASSWORD=${{ secrets.TESTDB_PASSWORD }}" \
+          wsl -d Ubunbu-24.04 docker run -itd --network host --name Postgres `
+            -p 5432:5432 `
+            -e "POSTGRES_USER=admin" `
+            -e "POSTGRES_PASSWORD=${{ secrets.TESTDB_PASSWORD }}" `
             ghcr.io/openentity/adventureworksltdb:postgres18
 
       - name: Setup dotnet

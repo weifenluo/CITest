@@ -1,0 +1,59 @@
+﻿name: Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  MSSQL:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Start SQL Server
+        run: |
+
+          docker run -d ghcr.io/openentity/adventureworksltdb:mssql2022 \
+            --name MSSQL \
+            -p 1433:1433 `
+            -e MSSQL_SA_PASSWORD="${{ secrets.TESTDB_PASSWORD }}" \
+            -e ACCEPT_EULA="Y" `
+
+      - name: Wait for MSSQL port
+        run: |
+          for i in {1..60}; do
+            if nc -z localhost 1432; then
+              echo "MSSQL port 1432 is ready!"
+              exit 0
+            fi
+            echo "Waiting for MSSQL port 1432..."
+            sleep 5
+          done
+          echo "Timeout waiting for MSSQL port 1432"
+          exit 1
+
+      - name: Start and parse Serveo tunnel
+        run: |
+          # Just a neat trick: start a tunnel and parse out the assigned port
+          nohup ssh -o StrictHostKeyChecking=no -R 0:localhost:1432 serveo.net > mssql.log 2>&1 &
+          sleep 5
+
+          TUNNEL_LINE=$(grep 'Forwarding TCP' serveo.log || true)
+          if [ -z "$TUNNEL_LINE" ]; then
+            echo "No forwarding line found"
+            exit 1
+          fi
+
+          HOST="serveo.net"
+          PORT=$(echo "$TUNNEL_LINE" | sed 's/.*Forwarding TCP connect from .*:\([0-9]*\)/\1/')
+
+          echo "MSSQL Public Access:"
+          echo "Host: $HOST"
+          echo "Port: $PORT"
+
+          echo "HOST=$HOST" >> $GITHUB_ENV
+          echo "PORT=$PORT" >> $GITHUB_ENV
+
+      - name: Keep session running
+        run: |
+          # Keep the workflow alive so the database stays accessible.
+          echo "Press Ctrl+C or cancel the workflow when done."
+          tail -f /dev/null

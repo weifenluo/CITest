@@ -1,4 +1,12 @@
 <Solution>
+  <Folder Name="/.github/" />
+  <Folder Name="/.github/workflows/">
+    <File Path=".github/workflows/coverage.yml" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="CodeCoverage.runsettings" />
+    <File Path="global.json" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Postgres/Postgres.csproj" />
     <Project Path="src/SqlServer/SqlServer.csproj" />

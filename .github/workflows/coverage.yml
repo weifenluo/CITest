@@ -33,6 +33,7 @@ jobs:
         run: |
           docker ps
           docker logs MSSQL
+          sqlcmd -S localhost -d AdventureWorksLT -U sa -P ${{ secrets.TESTDB_PASSWORD }} -Q "SELECT TOP 10 * FROM SalesLT.Address;"
 
       - name: Start and parse Serveo tunnel
         run: |

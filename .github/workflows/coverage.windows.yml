@@ -9,20 +9,10 @@ jobs:
 
     steps:
 
-      # - name: Setup WSL
-      #   uses: Vampire/setup-wsl@v6
-      #   with:
-      #     distribution: Ubuntu-24.04
-
-      - name: Switch to WSL
-        shell: cmd
-        run: |
-          docker info
-          c:
-          cd "C:\ProgramData\docker"
-          dir
-          dir DockerCli.exe /s
-          DockerCli.exe -SwitchLinuxDaemon
+      - name: Setup WSL
+        uses: Vampire/setup-wsl@v6
+        with:
+          distribution: Ubuntu-24.04
 
       - name: Start SQL Server
         run: |

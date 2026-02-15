@@ -16,6 +16,14 @@ jobs:
             -e "ACCEPT_EULA=Y" \
             ghcr.io/openentity/adventureworksltdb:mssql2022
 
+      - name: Start Postgres
+        run: |
+          docker run -itd --network host --name Postgres \
+            -p 5432:5432 \
+            -e "POSTGRES_USER=admin" \
+            -e "POSTGRES_PASSWORD=${{ secrets.TESTDB_PASSWORD }}" \
+            ghcr.io/openentity/adventureworksltdb:postgres18
+
       - name: Wait for MSSQL port
         run: |
           for i in {1..20}; do
@@ -29,39 +37,52 @@ jobs:
           echo "Timeout waiting for MSSQL port 1433"
           exit 1
 
-      - name: Show database status
+      - name: Wait for Postgres port
         run: |
-          docker ps
-          docker logs MSSQL
-          /opt/mssql-tools18/bin/sqlcmd -S localhost -d AdventureWorksLT -U sa -P ${{ secrets.TESTDB_PASSWORD }} -Q "SELECT TOP 10 * FROM SalesLT.Address;"
+          for i in {1..20}; do
+            if nc -z localhost 5432; then
+              echo "MSSQL port 5432 is ready!"
+              exit 0
+            fi
+            echo "Waiting for MSSQL port 5432..."
+            sleep 3
+          done
+          echo "Timeout waiting for Postgres port 5432"
+          exit 1
 
-      - name: Start and parse Serveo tunnel
-        run: |
-          # Just a neat trick: start a tunnel and parse out the assigned port
-          echo "${{ secrets.SERVEO_SSH_KEY }}" > serveo.key
-          chmod 600 serveo.key
-          nohup ssh -i serveo.key -o StrictHostKeyChecking=no -R 0:localhost:1433 "${{ secrets.SERVEO_USER_NAME }}@serveo.net" > serveo.log 2>&1 &
-          sleep 5
+      # - name: Show database status
+      #   run: |
+      #     docker ps
+      #     docker logs MSSQL
+      #     /opt/mssql-tools18/bin/sqlcmd -S localhost -d AdventureWorksLT -U sa -P ${{ secrets.TESTDB_PASSWORD }} -Q "SELECT TOP 10 * FROM SalesLT.Address;"
 
-          tail serveo.log
-          TUNNEL_LINE=$(grep 'Forwarding TCP' serveo.log || true)
-          if [ -z "$TUNNEL_LINE" ]; then
-            echo "No forwarding line found"
-            exit 1
-          fi
+      # - name: Start and parse Serveo tunnel
+      #   run: |
+      #     # Just a neat trick: start a tunnel and parse out the assigned port
+      #     echo "${{ secrets.SERVEO_SSH_KEY }}" > serveo.key
+      #     chmod 600 serveo.key
+      #     nohup ssh -i serveo.key -o StrictHostKeyChecking=no -R 0:localhost:1433 "${{ secrets.SERVEO_USER_NAME }}@serveo.net" > serveo.log 2>&1 &
+      #     sleep 5
 
-          HOST="serveo.net"
-          PORT=$(echo "$TUNNEL_LINE" | sed 's/.*Forwarding TCP connect from .*:\([0-9]*\)/\1/')
+      #     tail serveo.log
+      #     TUNNEL_LINE=$(grep 'Forwarding TCP' serveo.log || true)
+      #     if [ -z "$TUNNEL_LINE" ]; then
+      #       echo "No forwarding line found"
+      #       exit 1
+      #     fi
 
-          echo "MSSQL Public Access:"
-          echo "Host: $HOST"
-          echo "Port: $PORT"
+      #     HOST="serveo.net"
+      #     PORT=$(echo "$TUNNEL_LINE" | sed 's/.*Forwarding TCP connect from .*:\([0-9]*\)/\1/')
 
-          echo "HOST=$HOST" >> $GITHUB_ENV
-          echo "PORT=$PORT" >> $GITHUB_ENV
+      #     echo "MSSQL Public Access:"
+      #     echo "Host: $HOST"
+      #     echo "Port: $PORT"
 
-      - name: Keep session running
-        run: |
-          # Keep the workflow alive so the database stays accessible.
-          echo "Press Ctrl+C or cancel the workflow when done."
-          tail -f /dev/null
+      #     echo "HOST=$HOST" >> $GITHUB_ENV
+      #     echo "PORT=$PORT" >> $GITHUB_ENV
+
+      # - name: Keep session running
+      #   run: |
+      #     # Keep the workflow alive so the database stays accessible.
+      #     echo "Press Ctrl+C or cancel the workflow when done."
+      #     tail -f /dev/null

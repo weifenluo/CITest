@@ -10,12 +10,11 @@ jobs:
     steps:
       - name: Start SQL Server
         run: |
-          docker pull ghcr.io/openentity/adventureworksltdb:mssql2022
           docker run -itd --network host ghcr.io/openentity/adventureworksltdb:mssql2022 \
             --name MSSQL \
             -p 1433:1433 `
-            -e MSSQL_SA_PASSWORD="${{ secrets.TESTDB_PASSWORD }}" \
-            -e ACCEPT_EULA="Y" `
+            -e "MSSQL_SA_PASSWORD=${{ secrets.TESTDB_PASSWORD }}" \
+            -e "ACCEPT_EULA=Y"
 
       - name: Wait for MSSQL port
         run: |

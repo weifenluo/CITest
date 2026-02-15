@@ -17,6 +17,7 @@ jobs:
       - name: Switch to WSL
         shell: cmd
         run: |
+          docker info
           cd
           cd "C:\Program Files\Docker"
           dir DockerCli.exe /s

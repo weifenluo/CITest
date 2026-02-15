@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Start SQL Server
         run: |
-
+          docker pull ghcr.io/openentity/adventureworksltdb:mssql2022
           docker run -itd --network host ghcr.io/openentity/adventureworksltdb:mssql2022 \
             --name MSSQL \
             -p 1433:1433 `

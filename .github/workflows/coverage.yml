@@ -10,23 +10,23 @@ jobs:
     steps:
       - name: Start SQL Server
         run: |
-          docker run -itd --network host ghcr.io/openentity/adventureworksltdb:mssql2022 \
-            --name MSSQL \
-            -p 1433:1433 `
+          docker run -itd --network host --name MSSQL \
+            -p 1433:1433 \
             -e "MSSQL_SA_PASSWORD=${{ secrets.TESTDB_PASSWORD }}" \
-            -e "ACCEPT_EULA=Y"
+            -e "ACCEPT_EULA=Y" \
+            ghcr.io/openentity/adventureworksltdb:mssql2022
 
       - name: Wait for MSSQL port
         run: |
           for i in {1..20}; do
-            if nc -z localhost 1432; then
-              echo "MSSQL port 1432 is ready!"
+            if nc -z localhost 1433; then
+              echo "MSSQL port 1433 is ready!"
               exit 0
             fi
-            echo "Waiting for MSSQL port 1432..."
+            echo "Waiting for MSSQL port 1433..."
             sleep 3
           done
-          echo "Timeout waiting for MSSQL port 1432"
+          echo "Timeout waiting for MSSQL port 1433"
           docker ps
           docker logs MSSQL
           exit 1

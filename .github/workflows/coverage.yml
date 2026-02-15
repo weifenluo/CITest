@@ -32,25 +32,26 @@ jobs:
       - name: Start and parse Serveo tunnel
         run: |
           # Just a neat trick: start a tunnel and parse out the assigned port
-          nohup ssh -o StrictHostKeyChecking=no -R 80:localhost:1433 serveo.net > serveo.log 2>&1 &
+          echo ${{ secrets.SERVEO_SSH_KEY }} > serveo.key
+          nohup ssh -i serveo.key -o StrictHostKeyChecking=no -R 1433:localhost:1433 ${{ secrets.SERVEO_USER_NAME }}@serveo.net > serveo.log 2>&1 &
           sleep 5
 
           tail serveo.log
-          # TUNNEL_LINE=$(grep 'Forwarding TCP' serveo.log || true)
-          # if [ -z "$TUNNEL_LINE" ]; then
-          #   echo "No forwarding line found"
-          #   exit 1
-          # fi
+          TUNNEL_LINE=$(grep 'Forwarding TCP' serveo.log || true)
+          if [ -z "$TUNNEL_LINE" ]; then
+            echo "No forwarding line found"
+            exit 1
+          fi
 
-          # HOST="serveo.net"
-          # PORT=$(echo "$TUNNEL_LINE" | sed 's/.*Forwarding TCP connect from .*:\([0-9]*\)/\1/')
+          HOST="serveo.net"
+          PORT=$(echo "$TUNNEL_LINE" | sed 's/.*Forwarding TCP connect from .*:\([0-9]*\)/\1/')
 
-          # echo "MSSQL Public Access:"
-          # echo "Host: $HOST"
-          # echo "Port: $PORT"
+          echo "MSSQL Public Access:"
+          echo "Host: $HOST"
+          echo "Port: $PORT"
 
-          # echo "HOST=$HOST" >> $GITHUB_ENV
-          # echo "PORT=$PORT" >> $GITHUB_ENV
+          echo "HOST=$HOST" >> $GITHUB_ENV
+          echo "PORT=$PORT" >> $GITHUB_ENV
 
       - name: Keep session running
         run: |

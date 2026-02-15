@@ -14,18 +14,9 @@ jobs:
         with:
           distribution: Ubuntu-24.04
 
-      - name: Install Docker in WSL
-        run: |
-          wsl -- sudo apt-get update
-          wsl -- sudo apt-get install -y docker.io
-
-      - name: Start Docker daemon in WSL
-        run: |
-          wsl -- sudo service docker start
-
       - name: Start SQL Server
         run: |
-          wsl docker run -itd --network host --name MSSQL `
+          docker run -itd --network host --name MSSQL `
             -p 1433:1433 `
             -e "MSSQL_SA_PASSWORD=${{ secrets.TESTDB_PASSWORD }}" `
             -e "ACCEPT_EULA=Y" `
@@ -33,7 +24,7 @@ jobs:
 
       - name: Start Postgres
         run: |
-          wsl docker run -itd --network host --name Postgres `
+          docker run -itd --network host --name Postgres `
             -p 5432:5432 `
             -e "POSTGRES_USER=admin" `
             -e "POSTGRES_PASSWORD=${{ secrets.TESTDB_PASSWORD }}" `
@@ -43,32 +34,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.x
-
-      # - name: Wait for MSSQL port
-      #   run: |
-      #     for i in {1..20}; do
-      #       if nc -z localhost 1433; then
-      #         echo "MSSQL port 1433 is ready!"
-      #         exit 0
-      #       fi
-      #       echo "Waiting for MSSQL port 1433..."
-      #       sleep 3
-      #     done
-      #     echo "Timeout waiting for MSSQL port 1433"
-      #     exit 1
-
-      # - name: Wait for Postgres port
-      #   run: |
-      #     for i in {1..20}; do
-      #       if nc -z localhost 5432; then
-      #         echo "Postgres port 5432 is ready!"
-      #         exit 0
-      #       fi
-      #       echo "Waiting for Postgres port 5432..."
-      #       sleep 3
-      #     done
-      #     echo "Timeout waiting for Postgres port 5432"
-      #     exit 1
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -82,40 +47,3 @@ jobs:
           OpenEntity_Postgres_Password: "${{ secrets.TESTDB_PASSWORD }}"
 
         run: dotnet test --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml --coverage-settings CodeCoverage.runsettings
-
-      # - name: Show database status
-      #   run: |
-      #     docker ps
-      #     docker logs MSSQL
-      #     /opt/mssql-tools18/bin/sqlcmd -S localhost -d AdventureWorksLT -U sa -P ${{ secrets.TESTDB_PASSWORD }} -Q "SELECT TOP 10 * FROM SalesLT.Address;"
-
-      # - name: Start and parse Serveo tunnel
-      #   run: |
-      #     # Just a neat trick: start a tunnel and parse out the assigned port
-      #     echo "${{ secrets.SERVEO_SSH_KEY }}" > serveo.key
-      #     chmod 600 serveo.key
-      #     nohup ssh -i serveo.key -o StrictHostKeyChecking=no -R 0:localhost:1433 "${{ secrets.SERVEO_USER_NAME }}@serveo.net" > serveo.log 2>&1 &
-      #     sleep 5
-
-      #     tail serveo.log
-      #     TUNNEL_LINE=$(grep 'Forwarding TCP' serveo.log || true)
-      #     if [ -z "$TUNNEL_LINE" ]; then
-      #       echo "No forwarding line found"
-      #       exit 1
-      #     fi
-
-      #     HOST="serveo.net"
-      #     PORT=$(echo "$TUNNEL_LINE" | sed 's/.*Forwarding TCP connect from .*:\([0-9]*\)/\1/')
-
-      #     echo "MSSQL Public Access:"
-      #     echo "Host: $HOST"
-      #     echo "Port: $PORT"
-
-      #     echo "HOST=$HOST" >> $GITHUB_ENV
-      #     echo "PORT=$PORT" >> $GITHUB_ENV
-
-      # - name: Keep session running
-      #   run: |
-      #     # Keep the workflow alive so the database stays accessible.
-      #     echo "Press Ctrl+C or cancel the workflow when done."
-      #     tail -f /dev/null

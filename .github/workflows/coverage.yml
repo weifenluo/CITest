@@ -32,8 +32,8 @@ jobs:
       - name: Start and parse Serveo tunnel
         run: |
           # Just a neat trick: start a tunnel and parse out the assigned port
-          echo ${{ secrets.SERVEO_SSH_KEY }} > serveo.key
-          tail serveo.key
+          echo "${{ secrets.SERVEO_SSH_KEY }}" > serveo.key
+          chmod 600 serveo.key
           nohup ssh -i serveo.key -o StrictHostKeyChecking=no -R 1433:localhost:1433 "${{ secrets.SERVEO_USER_NAME }}@serveo.net" > serveo.log 2>&1 &
           sleep 5
 

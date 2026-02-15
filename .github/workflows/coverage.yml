@@ -29,6 +29,11 @@ jobs:
           echo "Timeout waiting for MSSQL port 1433"
           exit 1
 
+      - name: Show database status
+        run: |
+          docker ps
+          docker logs MSSQL
+
       - name: Start and parse Serveo tunnel
         run: |
           # Just a neat trick: start a tunnel and parse out the assigned port

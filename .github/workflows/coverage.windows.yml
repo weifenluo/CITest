@@ -19,7 +19,7 @@ jobs:
         run: |
           docker info
           cd
-          cd "C:\Program Files\Docker"
+          cd "C:\ProgramData\Docker"
           dir DockerCli.exe /s
           DockerCli.exe -SwitchLinuxDaemon
 

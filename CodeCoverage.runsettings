@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- File name extension must be .runsettings -->
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+			<DataCollector friendlyName="Code Coverage">
+				<Configuration>
+					<Format>Cobertura</Format>
+					<IncludeTestAssembly>False</IncludeTestAssembly>
+					<CodeCoverage>
+						<ModulePaths>
+							<Exclude>
+								<ModulePath>.*\\Microsoft\..*</ModulePath>
+							</Exclude>
+						</ModulePaths>
+						<Sources>
+							<Exclude>
+								<Source>.*\\\.shared\.src\\.*</Source>
+								<Source>.*\\\.shared\.test\\.*</Source>
+								<Source>.*\\test\\.*</Source>
+								<Source>.*\\testing\\.*</Source>
+								<Source>.*\.g\.cs</Source>
+							</Exclude>
+						</Sources>
+						<Attributes>
+							<Exclude>
+								 <!--Don't forget "Attribute" at the end of the name--> 
+								<Attribute>.*\.ObsoleteAttribute$</Attribute>
+								<Attribute>.*\.GeneratedCodeAttribute$</Attribute>
+								<Attribute>.*\.CompilerGeneratedAttribute$</Attribute>
+							</Exclude>
+						</Attributes>
+					</CodeCoverage>
+				</Configuration>
+			</DataCollector>
+		</DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

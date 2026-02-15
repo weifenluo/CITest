@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Postgres/Postgres.csproj" />
+    <Project Path="src/SqlServer/SqlServer.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Postgres/Postgres.Test.csproj" />
+    <Project Path="test/SqlServer/SqlServer.Test.csproj" />
+  </Folder>
+</Solution>

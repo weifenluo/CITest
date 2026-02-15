@@ -32,7 +32,7 @@ jobs:
       - name: Start and parse Serveo tunnel
         run: |
           # Just a neat trick: start a tunnel and parse out the assigned port
-          nohup ssh -o StrictHostKeyChecking=no -R 0:localhost:1433 serveo.net > serveo.log 2>&1 &
+          nohup ssh -o StrictHostKeyChecking=no -R 80:localhost:1433 serveo.net > serveo.log 2>&1 &
           sleep 5
 
           tail serveo.log

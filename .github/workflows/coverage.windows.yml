@@ -16,16 +16,16 @@ jobs:
 
       - name: Install Docker in WSL
         run: |
-          wsl -d Ubuntu-24.04 -- sudo apt-get update
-          wsl -d Ubuntu-24.04 -- sudo apt-get install -y docker.io
+          wsl -- sudo apt-get update
+          wsl -- sudo apt-get install -y docker.io
 
       - name: Start Docker daemon in WSL
         run: |
-          wsl -d Ubuntu-24.04 -- sudo service docker start
+          wsl -- sudo service docker start
 
       - name: Start SQL Server
         run: |
-          wsl -d Ubuntu-24.04 docker run -itd --network host --name MSSQL `
+          wsl docker run -itd --network host --name MSSQL `
             -p 1433:1433 `
             -e "MSSQL_SA_PASSWORD=${{ secrets.TESTDB_PASSWORD }}" `
             -e "ACCEPT_EULA=Y" `
@@ -33,7 +33,7 @@ jobs:
 
       - name: Start Postgres
         run: |
-          wsl -d Ubunbu-24.04 docker run -itd --network host --name Postgres `
+          wsl docker run -itd --network host --name Postgres `
             -p 5432:5432 `
             -e "POSTGRES_USER=admin" `
             -e "POSTGRES_PASSWORD=${{ secrets.TESTDB_PASSWORD }}" `

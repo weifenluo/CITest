@@ -18,7 +18,7 @@ jobs:
         shell: cmd
         run: |
           docker info
-          cd
+          c:
           cd "C:\ProgramData\docker"
           dir
           dir DockerCli.exe /s

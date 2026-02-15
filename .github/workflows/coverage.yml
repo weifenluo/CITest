@@ -28,6 +28,7 @@ jobs:
             sleep 3
           done
           echo "Timeout waiting for MSSQL port 1432"
+          docker ps
           docker logs MSSQL
           exit 1
 

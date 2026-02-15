@@ -63,7 +63,8 @@ jobs:
           OpenEntity_Postgres_User: "admin"
           OpenEntity_Postgres_Password: "${{ secrets.TESTDB_PASSWORD }}"
 
-        run: dotnet test --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml --coverage-settings CodeCoverage.runsettings
+        # run: dotnet test --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml --coverage-settings CodeCoverage.runsettings
+        run: dotnet test
 
       # - name: Show database status
       #   run: |

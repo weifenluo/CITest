@@ -9,26 +9,21 @@ jobs:
 
     steps:
 
-      - name: Setup WSL
-        uses: Vampire/setup-wsl@v6
+      - name: Setup MSSQL
+        uses: rails-sqlserver/setup-mssql@v1
         with:
-          distribution: Ubuntu-24.04
+          components: sqlcmd,sqlengine
+          force-encryption: true
+          sa-password: "${{ secrets.TESTDB_PASSWORD }}"
+          version: 2022
 
-      - name: Start SQL Server
-        run: |
-          docker run -itd --network host --name MSSQL `
-            -p 1433:1433 `
-            -e "MSSQL_SA_PASSWORD=${{ secrets.TESTDB_PASSWORD }}" `
-            -e "ACCEPT_EULA=Y" `
-            ghcr.io/openentity/adventureworksltdb:mssql2022
-
-      - name: Start Postgres
-        run: |
-          docker run -itd --network host --name Postgres `
-            -p 5432:5432 `
-            -e "POSTGRES_USER=admin" `
-            -e "POSTGRES_PASSWORD=${{ secrets.TESTDB_PASSWORD }}" `
-            ghcr.io/openentity/adventureworksltdb:postgres18
+      - name: Setup Postgres
+        uses: ikalnytskyi/action-setup-postgres@v8
+        with:
+          username: admin
+          password: "${{ secrets.TESTDB_PASSWORD }}"
+          postgres-version: "18"
+        id: postgres  
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4

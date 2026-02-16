@@ -10,7 +10,7 @@ jobs:
     steps:
 
       - name: Setup MSSQL
-        uses: rails-sqlserver/setup-mssql@v1
+        uses: openentity/setup-mssql@v1
         with:
           components: sqlcmd,sqlengine
           force-encryption: true
@@ -18,7 +18,7 @@ jobs:
           version: 2022
 
       - name: Setup Postgres
-        uses: ikalnytskyi/action-setup-postgres@v8
+        uses: openentity/setup-postgres@v8
         with:
           username: admin
           password: "${{ secrets.TESTDB_PASSWORD }}"

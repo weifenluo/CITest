@@ -9,21 +9,18 @@ jobs:
 
     steps:
 
-      - name: Setup MSSQL
-        uses: openentity/setup-mssql@v1
+      - name: Setup MSSQL AdventureWorksLT Database
+        uses: openentity/setup-mssql
         with:
-          components: sqlcmd,sqlengine
-          force-encryption: true
           sa-password: "${{ secrets.TESTDB_PASSWORD }}"
-          version: 2022
 
-      - name: Setup Postgres
-        uses: openentity/setup-postgres@v8
-        with:
-          username: admin
-          password: "${{ secrets.TESTDB_PASSWORD }}"
-          postgres-version: "18"
-        id: postgres  
+      # - name: Setup Postgres
+      #   uses: openentity/setup-postgres@v8
+      #   with:
+      #     username: admin
+      #     password: "${{ secrets.TESTDB_PASSWORD }}"
+      #     postgres-version: "18"
+      #   id: postgres  
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4

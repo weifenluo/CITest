@@ -14,13 +14,10 @@ jobs:
         with:
           sa-password: "${{ secrets.TESTDB_PASSWORD }}"
 
-      # - name: Setup Postgres
-      #   uses: openentity/setup-postgres@v8
-      #   with:
-      #     username: admin
-      #     password: "${{ secrets.TESTDB_PASSWORD }}"
-      #     postgres-version: "18"
-      #   id: postgres  
+      - name: Setup Postgres AdventureWorksLT Database
+        uses: openentity/setup-adventureworksltdb-postgres@v1
+        with:
+          password: "${{ secrets.TESTDB_PASSWORD }}"
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4

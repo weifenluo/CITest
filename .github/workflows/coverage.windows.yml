@@ -9,15 +9,15 @@ jobs:
 
     steps:
 
-      - name: Setup MSSQL AdventureWorksLT Database
-        uses: openentity/setup-adventureworksltdb-mssql@v1
-        with:
-          sa-password: "${{ secrets.TESTDB_PASSWORD }}"
-
       - name: Setup Postgres AdventureWorksLT Database
         uses: openentity/setup-adventureworksltdb-postgres@v1
         with:
           password: "${{ secrets.TESTDB_PASSWORD }}"
+
+      - name: Setup MSSQL AdventureWorksLT Database
+        uses: openentity/setup-adventureworksltdb-mssql@v1
+        with:
+          sa-password: "${{ secrets.TESTDB_PASSWORD }}"
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4

@@ -10,7 +10,7 @@ jobs:
     steps:
 
       - name: Setup MSSQL AdventureWorksLT Database
-        uses: openentity/setup-adventureworkslt-mssql@v1
+        uses: openentity/setup-adventureworksltdb-mssql@v1
         with:
           sa-password: "${{ secrets.TESTDB_PASSWORD }}"
 
